@@ -11,6 +11,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.example.restapiexample.rest.response.BaseResponse;
+import com.example.restapiexample.utils.BroadcastHelper;
 import com.example.restapiexample.utils.Constnats;
 import com.example.restapiexample.utils.L;
 import com.google.gson.Gson;
@@ -28,7 +29,7 @@ public class BaseRequest<T extends BaseResponse> extends Request<T> {
     // -----------------------------------------------------------------------------------
     // Fields
     // -----------------------------------------------------------------------------------
-    private Context context;
+    protected Context context;
     private Class responseClass;
 
     // -----------------------------------------------------------------------------------
@@ -78,15 +79,6 @@ public class BaseRequest<T extends BaseResponse> extends Request<T> {
     public void deliverError(VolleyError error) {
         String message = "RESPONSE FAIL WITH CODE: " + error.networkResponse.statusCode + " AND MESSAGE " + error.getMessage();
         L.log(TAG, message);
-        sendResult(message);
-    }
-
-    // -----------------------------------------------------------------------------------
-    // Protected
-    // -----------------------------------------------------------------------------------
-    protected void sendResult(String result) {
-        Intent intent = new Intent(Constnats.ACTION_UPDATE_RESULT);
-        intent.putExtra(Constnats.EXTRA_RESULT, result);
-        context.sendBroadcast(intent);
+        BroadcastHelper.sendResultToMain(context, message);
     }
 }

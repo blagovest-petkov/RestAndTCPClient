@@ -5,5 +5,8 @@
     <string name="put">Put</string>
     <string name="post">Post</string>
     <string name="delete">Delete</string>
+    <string name="send_tcp_msg">Send message over TCP</string>
     <string name="no_result">No result</string>
+    <string name="tcp_msg_success">Message over TCP was sent success!</string>
+    <string name="tcp_msg_fail">Fail to sent message over TCP!</string>
 </resources>

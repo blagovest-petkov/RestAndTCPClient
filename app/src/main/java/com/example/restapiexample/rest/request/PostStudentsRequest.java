@@ -6,6 +6,7 @@ import com.android.volley.AuthFailureError;
 import com.example.restapiexample.rest.data.Student;
 import com.example.restapiexample.rest.response.BaseResponse;
 import com.example.restapiexample.rest.response.GetStudentResponse;
+import com.example.restapiexample.utils.BroadcastHelper;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,13 +15,19 @@ public class PostStudentsRequest extends BaseRequest<BaseResponse> {
 
     private static final String TAG = PostStudentsRequest.class.getSimpleName();
 
+    // -----------------------------------------------------------------------------------
+    // Instance creation
+    // -----------------------------------------------------------------------------------
     public PostStudentsRequest(Context context) {
         super(context, Method.POST, URL + "/students", BaseResponse.class);
     }
 
+    // -----------------------------------------------------------------------------------
+    // Lifecycle
+    // -----------------------------------------------------------------------------------
     @Override
     protected void deliverResponse(BaseResponse response) {
-        sendResult(response.toString());
+        BroadcastHelper.sendResultToMain(context, response.toString());
     }
 
     @Override
