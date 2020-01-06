@@ -14,10 +14,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.restapiexample.rest.RequestManager;
-import com.example.restapiexample.tcp.TCPCommunication;
-import com.example.restapiexample.tcp.TCPListener;
+import com.example.restapiexample.tcp.TCPClient;
 import com.example.restapiexample.utils.Constnats;
-import com.example.restapiexample.utils.L;
 
 public class MainActivity extends AppCompatActivity {
     // -----------------------------------------------------------------------------------
@@ -32,8 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView tvResult;
 
     private UpdateResultReceiver updateResultReceiver;
-    private TCPCommunication tcpCommunication;
-    private TCPListener tcpListener;
+    private TCPClient tcpClient;
 
 
     // -----------------------------------------------------------------------------------
@@ -43,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
 
     public MainActivity() {
         updateResultReceiver = new UpdateResultReceiver();
-        tcpCommunication = new TCPCommunication(MainActivity.this);
     }
 
     // -----------------------------------------------------------------------------------
@@ -56,8 +52,8 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         final RequestManager requestManager = new RequestManager(this);
-        tcpListener = new TCPListener(this);
-        //tcpListener.start();
+        tcpClient = new TCPClient(this, "10.10.45.76", 4444);
+        tcpClient.start();
 
         findViewById(R.id.btn_get).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
         btnTcp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new SendTcpDataTask().execute();
+                tcpClient.sendMessage("One short tcp request!");
             }
         });
         tvResult = findViewById(R.id.tv_result);
@@ -102,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-       // tcpListener.stop();
+        tcpClient.stop();
     }
 
     // -----------------------------------------------------------------------------------
@@ -121,27 +117,5 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             tvResult.setText(intent.getStringExtra(Constnats.EXTRA_RESULT));
         }
-    }
-
-    public class SendTcpDataTask extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected Boolean doInBackground(Void... arg) {
-            try {
-                tcpCommunication.send("One short tcp request!");
-                return true;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Boolean isSendSuccessful) {
-            super.onPostExecute(isSendSuccessful);
-            tvResult.setText(isSendSuccessful ? MainActivity.this.getString(R.string.tcp_msg_success) :
-                    MainActivity.this.getString(R.string.tcp_msg_fail));
-        }
-
     }
 }
